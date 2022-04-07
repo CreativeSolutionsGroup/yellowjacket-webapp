@@ -2,7 +2,8 @@ import { getAuth } from 'firebase/auth'
 import { useEffect, useState } from 'react'
 import './App.css'
 import { Login } from './components/Login'
-
+import { SearchPage } from './views/SearchPage'
+import { getGoogleSheetJSON } from './services/students'
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -10,10 +11,14 @@ const App = () => {
     getAuth().onAuthStateChanged(u => {
       setIsLoggedIn(!!u);
     })
-  }, [])
+  }, []);
 
   return (
-    <Login isLoggedIn={isLoggedIn} />
+    <div>
+      <Login isLoggedIn={isLoggedIn} />
+      {isLoggedIn ? (<SearchPage />) : <></>}
+    </div>
+
   )
 
 }
