@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Search } from "../components/Search"
 import { Student } from "../components/Student";
 import { StudentModel } from "../models/students";
-import { getAllSortedStudents } from "../services/students"
+import { checkInStudent, getAllSortedStudents } from "../services/students"
 
 export const SearchPage = () => {
   const [students, setStudents] = useState<Array<StudentModel>>([]);
@@ -13,6 +13,10 @@ export const SearchPage = () => {
 
     stu = stu.filter(s => !!s.last_name);
     setStudents(stu);
+  }
+
+  const checkIn = async (stu: StudentModel) => {
+    await checkInStudent(stu);
   }
 
   useEffect(() => {
@@ -27,7 +31,9 @@ export const SearchPage = () => {
 
       {filteredStudents.map(s => {
         return (
-          <Student student={s} />
+          <button type="button" onClick={() => checkIn(s)}>
+            <Student student={s} />
+          </button>
         )
       })}
       </div>
