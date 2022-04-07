@@ -56,7 +56,6 @@ const client = twilioCons(t_accountSid, t_authToken);
 
 const sendMessagesToContacts = async (student: StudentModel) => {
   numberKeys.forEach((column, i) => {
-    console.log(column);
     if (student[column]) {
       const studentNumber = formatNumberToE164(student[column]);
 

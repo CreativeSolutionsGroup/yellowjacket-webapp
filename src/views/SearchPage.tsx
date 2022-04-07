@@ -12,7 +12,7 @@ export const SearchPage = () => {
   const getStudents = async () => {
     let stu = await getAllSortedStudents();
 
-    stu = stu.filter(s => !!s.last_name);
+    stu = stu.filter(s => !!s.last_name && s.is_checked_in === "FALSE");
     setStudents(stu);
   }
 

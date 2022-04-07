@@ -1,5 +1,5 @@
 export interface StudentModel {
-  is_checked_in: boolean,
+  is_checked_in: string,
   sting_group_id: string,
   student_id: string,
   last_name: string,
