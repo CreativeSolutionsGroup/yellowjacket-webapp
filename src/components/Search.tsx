@@ -8,7 +8,7 @@ export const Search = ({ unfiltered, filterKey, filtered }: { unfiltered: Array<
   }, [searchValue])
 
   return (
-    <input type="text" className="border-2 border-slate px-3 py-1.5 h-16 md:w-96 rounded" onInput={val => {
+    <input type="text" className="border-2 border-slate px-3 py-1.5 h-16 md:w-10/12 rounded" onInput={val => {
       return setSearchValue(val.target.value);
     }} />
   )

@@ -13,10 +13,14 @@ export const TopBar = ({ children }: PropsWithChildren<any>) => {
   }, []);
 
   return (
-    <div className="bg-blue-500 flex flex-row items-center mb-10 h-16 shadow w-full px-5">
-      <div className="ml-auto">
-
-      <Login isLoggedIn={isLoggedIn} />
+    <div className="bg-sky-900 flex flex-row items-center justify-between mb-10 h-32 shadow w-full px-5">
+      <div className="w-32">
+      </div>
+      <div>
+        <h1 className="text-white font-bold text-3xl">Yellow Jacket Check-In</h1>
+      </div>
+      <div className="w-32">
+        <Login isLoggedIn={isLoggedIn} />
       </div>
     </div>
   )
