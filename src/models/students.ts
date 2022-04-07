@@ -1,0 +1,15 @@
+export interface StudentModel {
+  is_checked_in: boolean,
+  sting_group_id: string,
+  student_id: string,
+  last_name: string,
+  first_name: string,
+  gender: string,
+  student_phone: string,
+  ra_phone: string,
+  sting_phone_1: string,
+  sting_phone_2: string,
+  sting_phone_3: string,
+  sting_phone_4: string,
+  sting_phone_5: string,
+}

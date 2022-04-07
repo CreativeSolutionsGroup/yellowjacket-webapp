@@ -15,7 +15,6 @@ const App = () => {
 
   return (
     <div>
-      <Login isLoggedIn={isLoggedIn} />
       {isLoggedIn ? (<SearchPage />) : <></>}
     </div>
 

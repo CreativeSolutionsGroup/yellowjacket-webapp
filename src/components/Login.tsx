@@ -11,11 +11,11 @@ export const Login = ({ isLoggedIn }: {isLoggedIn: boolean }) => {
 
   if (!isLoggedIn) {
     return (
-      <button onClick={login}>Login</button>
+      <button className="px-3 py-1 bg-orange-400 rounded text-white" onClick={login}>Login</button>
     )
   } else {
     return (
-      <button onClick={logout}>Logout</button>
+      <button className="px-3 py-1 bg-orange-400 rounded text-white" onClick={logout}>Logout</button>
     )
   }
   

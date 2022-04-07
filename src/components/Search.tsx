@@ -1,9 +1,15 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
-export const Search = () => {
-  const [searchValue, setSearchValue] = useState();
+export const Search = ({ unfiltered, filterKey, filtered }: { unfiltered: Array<any>, filterKey: string, filtered: Function }) => {
+  const [searchValue, setSearchValue] = useState("");
+
+  useEffect(() => {
+    filtered(searchValue ? unfiltered.filter(u => u[filterKey].toUpperCase().includes(searchValue.toUpperCase())) : unfiltered)
+  }, [searchValue])
 
   return (
-    <input type="text" value={searchValue} />
+    <input type="text" className="border-2 border-slate px-3 py-1.5 h-16 md:w-96 rounded" onInput={val => {
+      return setSearchValue(val.target.value);
+    }} />
   )
 }

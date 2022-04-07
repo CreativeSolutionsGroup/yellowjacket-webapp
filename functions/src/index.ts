@@ -1,6 +1,5 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin"
-import { GoogleSpreadsheet } from "google-spreadsheet";
 import { google } from "googleapis";
 admin.initializeApp();
 const sheets = google.sheets('v4')
@@ -14,6 +13,11 @@ const jwtClient = new google.auth.JWT({
 });
 
 export const getSheetData = functions.https.onCall(async (data, ctx) => {
+  // make sure authed
+  if (!ctx.auth || !ctx.auth.token) {
+    return "Not allowed";
+  }
+
   await jwtClient.authorize();
 
   const d = await sheets.spreadsheets.values.get({
@@ -34,26 +38,4 @@ export const getSheetData = functions.https.onCall(async (data, ctx) => {
   });
 
   return students;
-});
-
-export const getSheetDataLib = functions.https.onCall(async (data, ctx) => {
-  functions.logger.log("Begin Execution")
-
-  const doc = new GoogleSpreadsheet(spreadsheetId);
-
-  await doc.useServiceAccountAuth({
-    client_email: process.env.EMAIL as string,
-    private_key: process.env.PKEY as string,
-  });
-
-  await doc.loadInfo();
-
-  const sheet = doc.sheetsByTitle["SORTED"];
-  const rows = await sheet.getRows();
-
-  functions.logger.log("Finished Execution")
-
-  console.log();
-
-  return rows[0];
 });
