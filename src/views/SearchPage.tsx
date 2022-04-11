@@ -41,9 +41,9 @@ export const SearchPage = () => {
 
           <div className="flex-col flex items-center w-full mt-5">
 
-            {filteredStudents.map(s => {
+            {filteredStudents.map((s, i) => {
               return (
-                <button className="w-9/12 my-5 rounded-xl hover:text-white hover:bg-black cursor-pointer border border-black" type="button" onClick={() => checkIn(s)}>
+                <button key={i} className="w-9/12 my-5 rounded-xl hover:text-white hover:bg-black cursor-pointer border border-black" type="button" onClick={() => checkIn(s)}>
                   <Student student={s} />
                 </button>
               )

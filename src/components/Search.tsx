@@ -9,7 +9,7 @@ export const Search = ({ unfiltered, filterKey, filtered }: { unfiltered: Array<
 
   return (
     <input type="text" className="border-2 border-slate px-3 py-1.5 h-16 md:w-10/12 rounded" onInput={val => {
-      return setSearchValue(val.target.value);
+      return setSearchValue((val.target as HTMLInputElement).value);
     }} />
   )
 }

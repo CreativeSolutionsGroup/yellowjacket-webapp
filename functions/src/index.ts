@@ -84,6 +84,10 @@ const sendMessagesToContacts = async (student: StudentModel) => {
 }
 
 export const checkInStudentById = functions.https.onCall(async (data, ctx) => {
+  if (!ctx.auth || !ctx.auth.token) {
+    return "Not allowed";
+  }
+
   const student = data.student as StudentModel;
   if (student) {
     await sendMessagesToContacts(student);
