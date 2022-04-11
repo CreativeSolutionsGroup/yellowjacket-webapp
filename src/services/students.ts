@@ -1,5 +1,6 @@
 import axios from "axios";
 import { connectFunctionsEmulator, Functions, getFunctions, httpsCallable } from "firebase/functions";
+import { CheckIn } from "../models/CheckIns";
 import { StudentModel } from "../models/students";
 
 
@@ -17,4 +18,10 @@ export const getAllSortedStudents = async (fn: Functions = getFunctions()): Prom
   // connectFunctionsEmulator(fn, "localhost", 5001);
   const httpsData = await httpsCallable(fn, "getSheetData")();
   return httpsData.data as Array<StudentModel>;
+}
+
+export const getAllCheckedIn = async (fn :Functions = getFunctions()) => {
+  // connectFunctionsEmulator(fn, "localhost", 5001);
+  const httpsData = await httpsCallable(fn, "getCheckInData")();
+  return httpsData.data as Array<CheckIn>;
 }

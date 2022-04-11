@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Search } from "../components/Search"
 import { Student } from "../components/Student";
 import { StudentModel } from "../models/students";
-import { checkInStudent, getAllSortedStudents } from "../services/students"
+import { checkInStudent, getAllCheckedIn, getAllSortedStudents } from "../services/students"
 
 export const SearchPage = () => {
   const [students, setStudents] = useState<Array<StudentModel>>([]);
@@ -10,20 +10,24 @@ export const SearchPage = () => {
   const [sending, setSending] = useState<boolean>(false);
 
   const getStudents = async () => {
-    let stu = await getAllSortedStudents();
+    let stu = getAllSortedStudents();
+    let checkedIn = getAllCheckedIn();
 
-    stu = stu.filter(s => !!s.last_name && s.is_checked_in === "FALSE");
-    setStudents(stu);
+    const val = await Promise.all([stu, checkedIn]);
+
+    let parsedStudents = val[0].filter(s => !!s.last_name && val[1].findIndex(c => c.student_id === s.student_id) < 0);
+    setStudents(parsedStudents);
   }
 
   const checkIn = async (stu: StudentModel) => {
     try {
       setSending(true);
       await checkInStudent(stu);
-    } catch (e) {
-
+    } catch (e: any) {
+      alert(e.message)
     }
 
+    await getStudents();
     setSending(false);
   }
 
