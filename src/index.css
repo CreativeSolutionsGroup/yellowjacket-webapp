@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  .bg-cedarville-primary {
+    background-color: rgb(0, 82, 136);
+  }
+
+  .text-cedarville-primary {
+    color: rgb(0, 82, 136);
+  }
+
+  .bg-cedarville-secondary {
+    background-color: rgb(253, 185, 19);
+  }
+
+.text-cedarville-secondary {
+    color: rgb(253, 185, 19);
+  }
+}

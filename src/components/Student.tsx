@@ -1,4 +1,4 @@
-import { StudentModel } from "../models/students";
+import { StudentModel } from "../models/Students";
 
 export const Student = ({ student }: { student: StudentModel }) => {
   return (

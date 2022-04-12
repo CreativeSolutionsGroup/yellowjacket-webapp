@@ -13,7 +13,7 @@ export const TopBar = ({ children }: PropsWithChildren<any>) => {
   }, []);
 
   return (
-    <div className="bg-sky-900 flex flex-row items-center justify-between mb-10 h-32 shadow w-full px-5">
+    <div className="bg-cedarville-primary flex flex-row items-center justify-between mb-10 h-32 shadow w-full px-5">
       <div>
         <h1 className="text-white font-bold text-xl sm:text-3xl">Yellow Jacket Check-In</h1>
       </div>

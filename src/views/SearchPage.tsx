@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
+import { Loading } from "../components/Loading";
 import { Search } from "../components/Search"
 import { Student } from "../components/Student";
-import { StudentModel } from "../models/students";
+import { StudentModel } from "../models/Students";
 import { checkInStudent, getAllCheckedIn, getAllSortedStudents } from "../services/students"
 
 export const SearchPage = () => {
   const [students, setStudents] = useState<Array<StudentModel>>([]);
   const [filteredStudents, setFilteredStudents] = useState<Array<StudentModel>>([]);
-  const [sending, setSending] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const getStudents = async () => {
     let stu = getAllSortedStudents();
@@ -17,27 +18,29 @@ export const SearchPage = () => {
 
     let parsedStudents = val[0].filter(s => !!s.last_name && val[1].findIndex(c => c.student_id === s.student_id) < 0);
     setStudents(parsedStudents);
+    setLoading(false);
   }
 
   const checkIn = async (stu: StudentModel) => {
     try {
-      setSending(true);
+      setLoading(true);
       await checkInStudent(stu);
     } catch (e: any) {
       alert(e.message)
     }
 
     await getStudents();
-    setSending(false);
+    setLoading(false);
   }
 
   useEffect(() => {
     getStudents()
   }, []);
 
+
   return (
     <div className="flex flex-col justify-center items-center">
-      {sending ? <h2 className="text-3xl font-bold">Sending...</h2>
+      {loading ? <Loading />
         :
         <div className="w-full flex flex-col justify-center items-center">
           <h2 className="mb-5 text-3xl">Search for New Student:</h2>

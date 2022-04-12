@@ -2,6 +2,10 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 
+/**
+ * Initializes the Firebase app.
+ * @returns The app and analytics object.
+ */
 export const initFirebase = () => {
   const firebaseConfig = {
     apiKey: "AIzaSyAiG-G37a0PxlYRmXPPf1Bede-MCMXSkS8",
@@ -16,4 +20,9 @@ export const initFirebase = () => {
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
+
+  return {
+    app,
+    analytics
+  }
 }
