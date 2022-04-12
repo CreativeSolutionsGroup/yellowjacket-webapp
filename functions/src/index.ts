@@ -143,7 +143,7 @@ export const checkInStudentById = functions.https.onCall(async (data, ctx) => {
   const student = data.student as StudentModel;
   if (student) {
     const messagesSent = await sendMessagesToContacts(student);
-  // const messagesSent = { success: 5, failed: 6}
+    // const messagesSent = { success: 5, failed: 6}
     await addStudentToCheckIn(student, messagesSent.success, messagesSent.failed);
   }
 

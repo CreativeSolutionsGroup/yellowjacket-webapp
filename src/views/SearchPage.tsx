@@ -15,8 +15,12 @@ export const SearchPage = () => {
     let checkedIn = getAllCheckedIn();
 
     const val = await Promise.all([stu, checkedIn]);
-
-    let parsedStudents = val[0].filter(s => !!s.last_name && val[1].findIndex(c => c.student_id === s.student_id) < 0);
+    const isProd = import.meta.env.MODE === "production";
+    let parsedStudents = val[0].filter(s => 
+      (!!s.last_name) &&
+      (val[1].findIndex(c => c.student_id === s.student_id) < 0) &&
+      (isProd ? s.sting_group_id !== "STING_GROUP_TEST" : s.sting_group_id === "STING_GROUP_TEST")
+    );
     setStudents(parsedStudents);
     setLoading(false);
   }

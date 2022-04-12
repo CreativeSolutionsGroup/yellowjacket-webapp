@@ -4,9 +4,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "deploy": "yarn build && firebase deploy --only hosting",
-    "preview": "vite preview"
+    "deploy": "tsc && vite build && firebase deploy --only hosting",
+    "deploy:testing": "tsc && vite build --mode testing && firebase hosting:channel:deploy testing"
   },
   "dependencies": {
     "autoprefixer": "^10.4.4",

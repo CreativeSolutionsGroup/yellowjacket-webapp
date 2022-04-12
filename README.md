@@ -8,6 +8,20 @@ Web Application made as a replacement to CSG's old Google Sheets App Script.
 
 Tap on a name, sends a text to all of the interested people.
 
+## Deployment
+
+### Production
+
+1. Create the .env in the `functions` folder. The README contains all the info for this.
+2. `firebase login`
+3. `yarn deploy`
+4. Go into the `functions` folder
+5. Run `yarn deploy` again.
+
+### Testing
+
+Do everything such as Production but run `yarn deploy:testing` instead. This will build and push to the `testing` channel.
+
 ## Technologies
 
 - Firebase
