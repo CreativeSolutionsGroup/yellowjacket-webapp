@@ -3,7 +3,6 @@ import * as admin from "firebase-admin"
 import { google } from "googleapis";
 import { StudentModel } from "./models/Students";
 import twilioCons from "twilio";
-import { auth } from "firebase-functions";
 admin.initializeApp();
 
 const sheets = google.sheets('v4')
@@ -209,7 +208,7 @@ export const getSheetData = functions.https.onCall(async (data, ctx) => {
 /**
  * Deletes every account that is not in the user list.
  */
-export const deleteDisallowedAccount = auth.user().onCreate(async user => {
+export const deleteDisallowedAccount = functions.auth.user().onCreate(async user => {
   let email = user.email;
 
   await jwtClient.authorize();
@@ -231,5 +230,9 @@ export const deleteDisallowedAccount = auth.user().onCreate(async user => {
     return local_user
   });
 
-  return allowed_users.findIndex((user) => user.email === email);
+  if (allowed_users.findIndex((user) => user.email === email) === -1) {
+    await admin.auth().deleteUser(user.uid);
+    return true;
+  } 
+  return false;
 })
