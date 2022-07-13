@@ -3,6 +3,7 @@ import * as admin from "firebase-admin"
 import { google } from "googleapis";
 import { StudentModel } from "./models/Students";
 import twilioCons from "twilio";
+import { auth } from "firebase-functions";
 admin.initializeApp();
 
 const sheets = google.sheets('v4')
@@ -10,6 +11,7 @@ const sheets = google.sheets('v4')
 const SPREADSHEET_ID = '1rR3W5C-7Fge5MX8MwWzU2uE3MU5x--JWqLyI64VL1yU'
 const SORTED_SHEET = "SORTED";
 const CHECKIN_SHEET = "CHECK-INS";
+const ALLOWED_USERS_SHEET = "ALLOWED-USERS";
 const NUMBER_KEYS = ["student_phone", "ra_phone", "sting_phone_1", "sting_phone_2", "sting_phone_3", "sting_phone_4", "sting_phone_5"] as const;
 const KEY_TYPES = ["STU", "RA", "STING", "STING", "STING", "STING", "STING"] as const;
 
@@ -203,3 +205,31 @@ export const getSheetData = functions.https.onCall(async (data, ctx) => {
 
   return students;
 });
+
+/**
+ * Deletes every account that is not in the user list.
+ */
+export const deleteDisallowedAccount = auth.user().onCreate(async user => {
+  let email = user.email;
+
+  await jwtClient.authorize();
+
+  const d = await sheets.spreadsheets.values.get({
+    auth: jwtClient,
+    spreadsheetId: SPREADSHEET_ID,
+    range: `${ALLOWED_USERS_SHEET}!A1:D`
+  });
+
+  const values = d.data.values!;
+  const headers = values[0] as string[];
+
+  const allowed_users = values.slice(1).map(row => {
+    const local_user = {} as any;
+    row.map((item, i) => {
+      local_user[headers[i]] = item;
+    });
+    return local_user
+  });
+
+  return allowed_users.findIndex((user) => user.email === email);
+})
