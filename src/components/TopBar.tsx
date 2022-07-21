@@ -1,4 +1,4 @@
-import { getAuth } from "@firebase/auth";
+import { getAuth } from "firebase/auth";
 import { PropsWithChildren, useEffect, useState } from "react"
 import { Login } from "./Login"
 
