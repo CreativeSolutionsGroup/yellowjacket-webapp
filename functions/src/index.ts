@@ -38,6 +38,8 @@ interface TwilioPayload {
  * ex:  012-345-6789 -> +10123456789
  *      1-012-345-6789 -> +10123456789
  *      33-012-345-6789 -> +330123456789
+ * 
+ * @author Alec Mathiesen
  */
 function formatNumberToE164(phone: string) {
   let formatted = phone.trim().split('-').join('');
@@ -109,7 +111,7 @@ const sendMessagesToContacts = async (student: StudentModel) => {
 };
 
 /**
- * 
+ * @author Spencer Bills
  * @param student The student to add to the contacts
  * @param messages The number of message successes 
  * @param errored The number of failures
@@ -192,8 +194,10 @@ export const getSheetData = functions.https.onCall(async (data, ctx) => {
   });
 
   const values = d.data.values!;
+  // TODO: at some point, it will be valuable to make the student object typed.
   const headers = values[0] as string[];
 
+  // remove columns then for each create an object with column as key.
   const students = values.slice(1).map(row => {
     const student = {} as any;
     row.map((item, i) => {
@@ -206,7 +210,7 @@ export const getSheetData = functions.https.onCall(async (data, ctx) => {
 });
 
 /**
- * Deletes every account that is not in the user list.
+ * Deletes every account on create that is not in the user list.
  */
 export const deleteDisallowedAccount = functions.auth.user().onCreate(async user => {
   let email = user.email;
