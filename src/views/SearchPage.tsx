@@ -47,8 +47,8 @@ export const SearchPage = () => {
       {loading ? <Loading />
         :
         <div className="w-full flex flex-col justify-center items-center">
-          <h2 className="mb-5 text-3xl">Search for New Student:</h2>
-          {students.length > 0 ? <Search unfiltered={students!} filterKey="last_name" filtered={(ret: Array<StudentModel>) => setFilteredStudents(ret)} /> : <></>}
+          <h2 className="text-3xl">Search for New Student:</h2> <small className="mb-5">By last name</small>
+          {students.length > 0 ? <Search unfiltered={students!} filterKey="last_name" setFiltered={(ret: Array<StudentModel>) => setFilteredStudents(ret)} /> : <></>}
 
           <div className="flex-col flex items-center w-full mt-5">
 

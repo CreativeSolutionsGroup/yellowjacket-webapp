@@ -3,6 +3,8 @@ import * as admin from "firebase-admin"
 import { google } from "googleapis";
 import { StudentModel } from "./models/Students";
 import twilioCons from "twilio";
+import cors from "cors";
+const callCors = cors({ origin: true, credentials: true });
 admin.initializeApp();
 
 const sheets = google.sheets('v4')
@@ -153,37 +155,85 @@ export const checkInStudentById = functions.https.onCall(async (data, ctx) => {
   return "success!"
 });
 
-export const getCheckInData = functions.https.onCall(async (data, ctx) => {
-  if (!ctx.auth || !ctx.auth.token) {
-    return "Not allowed";
-  };
+/**
+ * @param req Firebase request for https onRequest function
+ * @param res Firebase response for https onRequest function
+ * @returns Void - just continues if it's alright.
+ */
+const validateFirebaseIdToken = async (req: functions.https.Request, res: functions.Response) => {
+  callCors(req, res, async () => {
+    functions.logger.log('Check if request is authorized with Firebase ID token');
 
-  await jwtClient.authorize();
+    if ((!req.headers.authorization || !req.headers.authorization.startsWith('Bearer ')) &&
+      !(req.cookies && req.cookies.__session)) {
+      functions.logger.error(
+        'No Firebase ID token was passed as a Bearer token in the Authorization header.',
+        'Make sure you authorize your request by providing the following HTTP header:',
+        'Authorization: Bearer <Firebase ID Token>',
+        'or by passing a "__session" cookie.'
+      );
+      res.status(403).send('Unauthorized');
+      return;
+    }
 
-  const d = await sheets.spreadsheets.values.get({
-    auth: jwtClient,
-    spreadsheetId: SPREADSHEET_ID,
-    range: `${CHECKIN_SHEET}!A1:D`
+    let idToken;
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      functions.logger.log('Found "Authorization" header');
+      // Read the ID Token from the Authorization header.
+      idToken = req.headers.authorization.split('Bearer ')[1];
+    } else if (req.cookies) {
+      functions.logger.log('Found "__session" cookie');
+      // Read the ID Token from cookie.
+      idToken = req.cookies.__session;
+    } else {
+      // No cookie
+      res.status(403).send('Unauthorized');
+      return;
+    }
+
+    try {
+      const decodedIdToken = await admin.auth().verifyIdToken(idToken);
+      functions.logger.log('ID Token correctly decoded', decodedIdToken);
+      return;
+    } catch (error) {
+      functions.logger.error('Error while verifying Firebase ID token:', error);
+      res.status(403).send('Unauthorized');
+      return;
+    }
   });
+};
 
-  const values = d.data.values!;
-  const headers = values[0] as string[];
+export const getCheckInData = functions.https.onRequest(async (req: functions.https.Request, res: functions.Response) => {
+  callCors(req, res, async () => {
+    validateFirebaseIdToken(req, res);
 
-  const checkIns = values.slice(1).map(row => {
-    const checkIn = {} as any;
-    row.map((item, i) => {
-      checkIn[headers[i]] = item;
+    await jwtClient.authorize();
+
+    const d = await sheets.spreadsheets.values.get({
+      auth: jwtClient,
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${CHECKIN_SHEET}!A1:D`
     });
-    return checkIn;
-  });
 
-  return checkIns;
+    const values = d.data.values!;
+    const headers = values[0] as string[];
+
+    const checkIns = values.slice(1).map(row => {
+      const checkIn = {} as any;
+      row.map((item, i) => {
+        checkIn[headers[i]] = item;
+      });
+      return checkIn;
+    });
+
+    res.json(checkIns);
+  });
 })
 
-export const getSheetData = functions.https.onCall(async (data, ctx) => {
-  if (!ctx.auth || !ctx.auth.token) {
-    return "Not allowed";
-  }
+
+
+export const getSheetData = functions.https.onRequest(async (req, res) => {
+  validateFirebaseIdToken(req, res);
 
   await jwtClient.authorize();
 
@@ -206,7 +256,9 @@ export const getSheetData = functions.https.onCall(async (data, ctx) => {
     return student;
   });
 
-  return students;
+  res.set('Cache-Control', 'public, max-age=300, s-maxage=600');
+
+  res.json(students);
 });
 
 /**
@@ -237,6 +289,6 @@ export const deleteDisallowedAccount = functions.auth.user().onCreate(async user
   if (allowed_users.findIndex((user) => user.email === email) === -1) {
     await admin.auth().deleteUser(user.uid);
     return true;
-  } 
+  }
   return false;
 })

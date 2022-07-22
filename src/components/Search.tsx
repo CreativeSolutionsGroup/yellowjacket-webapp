@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 
-export const Search = ({ unfiltered, filterKey, filtered }: { unfiltered: Array<any>, filterKey: string, filtered: Function }) => {
+export const Search = ({ unfiltered, filterKey, setFiltered }: { unfiltered: Array<any>, filterKey: string, setFiltered: Function }) => {
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
-    filtered(searchValue ? unfiltered.filter(u => u[filterKey].toUpperCase().includes(searchValue.toUpperCase())) : unfiltered)
+    setFiltered(searchValue ? unfiltered.filter(u => u[filterKey].toUpperCase().includes(searchValue.toUpperCase())) : unfiltered)
   }, [searchValue])
 
   return (
