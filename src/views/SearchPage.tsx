@@ -84,7 +84,7 @@ export const SearchPage = () => {
           <div>
             <h2 className="text-3xl">Are you sure?</h2>
 
-            <Student student={selectedStudent!} />
+            <Student student={selectedStudent} />
           </div>
 
           <div className="flex items-end flex-col w-full">
