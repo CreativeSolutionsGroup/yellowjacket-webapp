@@ -83,7 +83,8 @@ export const SearchPage = () => {
         <div className="flex flex-col h-full justify-between">
           <div>
             <h2 className="text-3xl">Are you sure?</h2>
-            <p>This will send out up to 7 text messages.</p>
+
+            <Student student={selectedStudent!} />
           </div>
 
           <div className="flex items-end flex-col w-full">
