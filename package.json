@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
+    "gh:build": "vite build",
     "fb:deploy": "vite build && firebase deploy --only hosting",
     "deploy:testing": "vite build --mode testing && firebase hosting:channel:deploy testing"
   },
