@@ -13,7 +13,7 @@ export const SearchPage = () => {
   const getStudents = async () => {
     let stu = getAllSortedStudents();
     let checkedIn = getAllCheckedIn();
-
+    
     const val = await Promise.all([stu, checkedIn]);
     const isProd = import.meta.env.MODE === "production";
     let parsedStudents = val[0].filter(s => 
@@ -22,12 +22,14 @@ export const SearchPage = () => {
       (isProd ? s.sting_group_id !== "STING_GROUP_TEST" : s.sting_group_id === "STING_GROUP_TEST")
     );
     setStudents(parsedStudents);
+    setFilteredStudents(parsedStudents);
     setLoading(false);
   }
 
   const checkIn = async (stu: StudentModel) => {
     try {
       setLoading(true);
+      // console.log(stu)
       await checkInStudent(stu);
     } catch (e: any) {
       alert(e.message)
