@@ -230,7 +230,11 @@ export const getCheckInData = functions.https.onRequest(async (req: functions.ht
   });
 })
 
+export const incrementReturnedStudentsCounter = functions.https.onRequest(async (req, res) => {
+  validateFirebaseIdToken(req, res);
 
+  await jwtClient.authorize();
+})
 
 export const getSheetData = functions.https.onRequest(async (req, res) => {
   validateFirebaseIdToken(req, res);

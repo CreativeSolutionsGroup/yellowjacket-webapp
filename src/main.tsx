@@ -6,6 +6,7 @@ import App from './App'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { TopBar } from './components/TopBar'
 import axios from 'axios'
+import { Landing } from './Landing'
 
 initFirebase();
 
@@ -17,7 +18,8 @@ ReactDOM.render(
     <TopBar />
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />}></Route>
+        <Route path="/" element={<Landing />} />
+        <Route path="/search" element={<App />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
