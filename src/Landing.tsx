@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { checkInReturningStudent } from './services/students';
 
 export const Landing = () => {
 
-  const increment = () => {
-    
+  const increment = async () => {
+    await checkInReturningStudent()
   }
 
   return (
@@ -18,4 +19,3 @@ export const Landing = () => {
     </div>
   );
 }
-
