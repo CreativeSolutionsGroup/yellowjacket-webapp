@@ -9,7 +9,7 @@ admin.initializeApp();
 
 const sheets = google.sheets('v4')
 
-const DASHBOARD_SHEET = "dashBoard"
+const DASHBOARD_SHEET = "Dashboard"
 const SPREADSHEET_ID = '1rR3W5C-7Fge5MX8MwWzU2uE3MU5x--JWqLyI64VL1yU'
 const SORTED_SHEET = "SORTED";
 const CHECKIN_SHEET = "CHECK-INS";
@@ -244,16 +244,21 @@ export const incrementReturnedStudentsCounter = functions.https.onRequest(async 
 
   const v = d.data.values!;
   const stu = v[0][0];
-  const new_stu = stu + 1;
-  d.data.values.update({
-    spreadsheet: process.env.SHEET_ID,
-    range: "C16",
+  const new_stu = +stu + 1;
+  
+  const resource = {
+    spreadsheetId: SPREADSHEET_ID,
+    range: `${DASHBOARD_SHEET}!C16`,
     valueInputOption: "RAW",
     auth: jwtClient,
     resource: {
       values: [[new_stu]]
     }
-  });
+  }
+
+  const result = await sheets.spreadsheets.values.update(resource);
+
+  res.json(result)
 })
 
 export const getSheetData = functions.https.onRequest(async (req, res) => {
