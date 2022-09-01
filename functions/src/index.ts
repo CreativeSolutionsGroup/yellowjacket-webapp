@@ -9,6 +9,7 @@ admin.initializeApp();
 
 const sheets = google.sheets('v4')
 
+const DASHBOARD_SHEET = "Dashboard"
 const SPREADSHEET_ID = '1rR3W5C-7Fge5MX8MwWzU2uE3MU5x--JWqLyI64VL1yU'
 const SORTED_SHEET = "SORTED";
 const CHECKIN_SHEET = "CHECK-INS";
@@ -230,7 +231,35 @@ export const getCheckInData = functions.https.onRequest(async (req: functions.ht
   });
 })
 
+export const incrementReturnedStudentsCounter = functions.https.onRequest(async (req, res) => {
+  validateFirebaseIdToken(req, res);
 
+  await jwtClient.authorize();
+
+  const d = await sheets.spreadsheets.values.get({
+    auth: jwtClient,
+    spreadsheetId: SPREADSHEET_ID,
+    range: `${DASHBOARD_SHEET}!C16`
+  });
+
+  const v = d.data.values!;
+  const stu = v[0][0];
+  const new_stu = +stu + 1;
+  
+  const resource = {
+    spreadsheetId: SPREADSHEET_ID,
+    range: `${DASHBOARD_SHEET}!C16`,
+    valueInputOption: "RAW",
+    auth: jwtClient,
+    resource: {
+      values: [[new_stu]]
+    }
+  }
+
+  const result = await sheets.spreadsheets.values.update(resource);
+
+  res.json(result)
+})
 
 export const getSheetData = functions.https.onRequest(async (req, res) => {
   validateFirebaseIdToken(req, res);

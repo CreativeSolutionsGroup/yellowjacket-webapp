@@ -34,3 +34,9 @@ export const getAllCheckedIn = async (fn :Functions = getFunctions(), auth =  ge
   });
   return httpsData.data as Array<CheckIn>;
 }
+
+export const checkInReturningStudent = async (fn: Functions = getFunctions()) => {
+  // connectFunctionsEmulator(fn, "localhost", 5001);
+  const httpsData = await httpsCallable(fn, "incrementReturnedStudentsCounter")();
+  return httpsData.data;
+}
