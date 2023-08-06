@@ -10,7 +10,7 @@ admin.initializeApp();
 const sheets = google.sheets('v4')
 
 const DASHBOARD_SHEET = "Dashboard"
-const SPREADSHEET_ID = '1rR3W5C-7Fge5MX8MwWzU2uE3MU5x--JWqLyI64VL1yU'
+const SPREADSHEET_ID = "1VISPPY6sV1m-RAeFfye0_Wowf-5XKvsZb0lflINtLfI"
 const SORTED_SHEET = "SORTED";
 const CHECKIN_SHEET = "CHECK-INS";
 const ALLOWED_USERS_SHEET = "ALLOWED-USERS";
@@ -199,14 +199,14 @@ const validateFirebaseIdToken = async (req: functions.https.Request, res: functi
     } catch (error) {
       functions.logger.error('Error while verifying Firebase ID token:', error);
       res.status(403).send('Unauthorized');
-      return;
+      throw "";
     }
   });
 };
 
 export const getCheckInData = functions.https.onRequest(async (req: functions.https.Request, res: functions.Response) => {
   callCors(req, res, async () => {
-    validateFirebaseIdToken(req, res);
+    await validateFirebaseIdToken(req, res);
 
     await jwtClient.authorize();
 
@@ -215,6 +215,8 @@ export const getCheckInData = functions.https.onRequest(async (req: functions.ht
       spreadsheetId: SPREADSHEET_ID,
       range: `${CHECKIN_SHEET}!A1:D`
     });
+
+    functions.logger.log("AAAAAAAAAAAAA: ", d);
 
     const values = d.data.values!;
     const headers = values[0] as string[];
@@ -232,7 +234,7 @@ export const getCheckInData = functions.https.onRequest(async (req: functions.ht
 })
 
 export const incrementReturnedStudentsCounter = functions.https.onRequest(async (req, res) => {
-  validateFirebaseIdToken(req, res);
+  await validateFirebaseIdToken(req, res);
 
   await jwtClient.authorize();
 
@@ -262,7 +264,7 @@ export const incrementReturnedStudentsCounter = functions.https.onRequest(async 
 })
 
 export const getSheetData = functions.https.onRequest(async (req, res) => {
-  validateFirebaseIdToken(req, res);
+  await validateFirebaseIdToken(req, res);
 
   await jwtClient.authorize();
 
