@@ -25,7 +25,7 @@ export const getAllSortedStudents = async (fn: Functions = getFunctions(), auth 
   return httpsData.data as Array<StudentModel>;
 }
 
-export const getAllCheckedIn = async (fn :Functions = getFunctions(), auth =  getAuth()) => {
+export const getAllCheckedIn = async (fn = getFunctions(), auth =  getAuth()) => {
   // connectFunctionsEmulator(fn, "localhost", 5001);
   const httpsData = await axios.get("getCheckInData", {
     headers: {
@@ -35,8 +35,12 @@ export const getAllCheckedIn = async (fn :Functions = getFunctions(), auth =  ge
   return httpsData.data as Array<CheckIn>;
 }
 
-export const checkInReturningStudent = async (fn: Functions = getFunctions()) => {
+export const checkInReturningStudent = async (fn = getFunctions(), auth =  getAuth()) => {
   // connectFunctionsEmulator(fn, "localhost", 5001);
-  const httpsData = await httpsCallable(fn, "incrementReturnedStudentsCounter")();
+  const httpsData = await axios.get("incrementReturnedStudentsCounter", {
+    headers: {
+      Authorization: `Bearer ${await auth.currentUser?.getIdToken()}`
+    }
+  });
   return httpsData.data;
 }

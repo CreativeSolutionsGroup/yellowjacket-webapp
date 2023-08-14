@@ -44,14 +44,16 @@ interface TwilioPayload {
  * 
  * @author Alec Mathiesen
  */
-function formatNumberToE164(phone: string) {
+function formatNumberToE164(phone?: string) {
+  if (phone == null) return null;
+
   let formatted = phone.trim().split('-').join('');
-  if (formatted.length == 10) {
+  if (formatted.length === 10) {
     formatted = '+1' + formatted;
   } else {
     formatted = '+' + formatted;
   }
-  if (formatted.length == 12 || formatted.length == 13) {
+  if (formatted.length === 12 || formatted.length === 13) {
     return formatted;
   }
   return null;
@@ -92,9 +94,9 @@ const sendMessagesToContacts = async (student: StudentModel) => {
       if (collection === "RA") {
         payload.body = `Your resident ${student.first_name} ${student.last_name} has checked in and will arrive at the dorm soon! -STING`
       } else if (collection === "STING") {
-        payload.body = `Your STING student ${student.first_name} ${student.last_name} has arrived! Please reach out to them in the next hour to welcome them to campus. -STING`;
+        payload.body = `Your STING student ${student.first_name} ${student.last_name} has arrived! Please reach out and welcome them to campus. -STING`;
       } else if (collection === "STU") {
-        payload.body = `Hey ${student.first_name}! Welcome home. We are so excited that you're here, please continue to your residence hall! -STING`
+        payload.body = `Hey ${student.first_name}! Welcome home. We are so excited that you're here. Please continue to your residence hall! -STING\nhttps://www.cedarville.edu/events/getting-started`
       }
 
       try {
@@ -216,8 +218,6 @@ export const getCheckInData = functions.https.onRequest(async (req: functions.ht
       range: `${CHECKIN_SHEET}!A1:D`
     });
 
-    functions.logger.log("AAAAAAAAAAAAA: ", d);
-
     const values = d.data.values!;
     const headers = values[0] as string[];
 
@@ -234,33 +234,34 @@ export const getCheckInData = functions.https.onRequest(async (req: functions.ht
 })
 
 export const incrementReturnedStudentsCounter = functions.https.onRequest(async (req, res) => {
-  await validateFirebaseIdToken(req, res);
+  callCors(req, res, async () => {
+    await validateFirebaseIdToken(req, res);
+    await jwtClient.authorize();
 
-  await jwtClient.authorize();
+    const d = await sheets.spreadsheets.values.get({
+      auth: jwtClient,
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${DASHBOARD_SHEET}!C16`
+    });
 
-  const d = await sheets.spreadsheets.values.get({
-    auth: jwtClient,
-    spreadsheetId: SPREADSHEET_ID,
-    range: `${DASHBOARD_SHEET}!C16`
-  });
+    const v = d.data.values!;
+    const stu = v[0][0];
+    const new_stu = +stu + 1;
 
-  const v = d.data.values!;
-  const stu = v[0][0];
-  const new_stu = +stu + 1;
-  
-  const resource = {
-    spreadsheetId: SPREADSHEET_ID,
-    range: `${DASHBOARD_SHEET}!C16`,
-    valueInputOption: "RAW",
-    auth: jwtClient,
-    resource: {
-      values: [[new_stu]]
+    const resource = {
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${DASHBOARD_SHEET}!C16`,
+      valueInputOption: "RAW",
+      auth: jwtClient,
+      resource: {
+        values: [[new_stu]]
+      }
     }
-  }
 
-  const result = await sheets.spreadsheets.values.update(resource);
+    const result = await sheets.spreadsheets.values.update(resource);
 
-  res.json(result)
+    res.json(result)
+  });
 })
 
 export const getSheetData = functions.https.onRequest(async (req, res) => {
